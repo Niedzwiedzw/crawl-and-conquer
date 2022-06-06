@@ -30,7 +30,6 @@ use tracing_subscriber::{
 };
 
 use scraper::{
-    html::Select,
     Html,
     Selector,
 };
@@ -88,7 +87,7 @@ pub struct ViewedLink {
     pub text: String,
 }
 fn normalized_url(url: url::Url) -> url::Url {
-    let text = url.as_str().trim_end_matches("#");
+    let text = url.as_str().trim_end_matches('#');
     url::Url::parse(text).unwrap_or(url)
 }
 impl ViewedLink {
@@ -224,7 +223,7 @@ impl Page {
                             }
                         }
                     }
-                    Err(error) => {
+                    Err(_) => {
                         let combined = current_url.join(&raw_url).wrap_err_with(|| {
                             format!("combining [{current_url}] with [{raw_url}]")
                         });
@@ -368,7 +367,7 @@ async fn main() -> Result<()> {
                                 url,
                                 viewed_link
                                     .into_iter()
-                                    .map(|ViewedLink { url, source, text }| {
+                                    .map(|ViewedLink { source, text, .. }| {
                                         format!("[{source}]:{text}")
                                     })
                                     .collect_vec()
